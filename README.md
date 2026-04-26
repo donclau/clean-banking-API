@@ -17,6 +17,12 @@ Banking Clean API es una aplicación backend que implementa un sistema de gesti�
 - ✅ Gestión completa de usuarios (CRUD)
 - ✅ Creación, consulta por ID y listado de usuarios
 - ✅ Validación de email único
+- ✅ Verificación automática de conexión a base de datos
+- ✅ Inicio seguro del servidor con validación de BD
+- ✅ Manejo robusto de errores de base de datos
+- ✅ Sistema de logging avanzado y configurable
+- ✅ Logging de requests HTTP con IP de cliente
+- ✅ Logging detallado de operaciones de BD
 - ✅ Entidad de dominio `User` y repositorio abstracto
 - ✅ Autenticación y autorización
 - ✅ Gestión de cuentas bancarias
@@ -101,43 +107,60 @@ pip install -r requirements.txt
 
 ## ⚙️ Configuración del Ambiente
 
-### 1. Crear archivo `.env`
+### 1. Crear archivo `.env` (Obligatorio)
 
-Copia el contenido en la raíz del proyecto:
+Copia el contenido del archivo `.env.example` y configúralo según tu entorno:
 
 ```bash
-# .env
+cp .env.example .env
+```
+
+**Contenido mínimo requerido:**
+```env
 DATABASE_URL=sqlite:///./bank_app.db
-# O para MySQL:
-# DATABASE_URL=mysql+pymysql://usuario:contraseña@localhost:3306/bank_app
 ```
 
 ### 2. Configurar Base de Datos
 
-**Opción 1: SQLite (Desarrollo)**
+**Opción 1: SQLite (Desarrollo - Recomendado)**
 ```
 DATABASE_URL=sqlite:///./bank_app.db
 ```
+- ✅ No requiere instalación adicional
+- ✅ Base de datos se crea automáticamente
+- ✅ Ideal para desarrollo y testing
 
 **Opción 2: MySQL (Producción)**
 ```
-DATABASE_URL=mysql+pymysql://usuario:contraseña@host:3306/banco_app
+DATABASE_URL=mysql+pymysql://usuario:contraseña@host:puerto/nombre_base_datos
 ```
+- ⚠️ Requiere MySQL server ejecutándose
+- ⚠️ La base de datos debe existir previamente
+- ⚠️ Credenciales deben ser correctas
+
+**Opción 3: PostgreSQL**
+```
+DATABASE_URL=postgresql://usuario:contraseña@host:puerto/nombre_base_datos
+```
+
+### ⚠️ Verificación de Conexión
+
+La aplicación **verifica automáticamente** la conexión a la base de datos al iniciar:
+
+- ✅ **SQLite**: Se crea automáticamente si no existe
+- ✅ **MySQL/PostgreSQL**: Debe existir y ser accesible
+- ❌ **Si falla**: El servidor NO se inicia y muestra mensaje de error claro
 
 ### Variables de Entorno Disponibles
 
 ```env
-# Base de datos
+# Base de datos (OBLIGATORIO)
 DATABASE_URL=sqlite:///./bank_app.db
 
-# Servidor
-HOST=0.0.0.0
-PORT=8000
-DEBUG=True
-
-# JWT (futuro)
-SECRET_KEY=tu-clave-secreta-aqui
-ALGORITHM=HS256
+# Aplicación (opcionales)
+PROJECT_NAME=Bank App API
+VERSION=1.0.0
+```
 ```
 
 ---
@@ -253,11 +276,118 @@ uvicorn app.main:app --reload
 - `--host 0.0.0.0`: Accesible desde cualquier interfaz
 - `--port 8000`: Puerto (por defecto)
 
-### Resultado Esperado
-
+### Verificar Instalación
+```bash
+python test_setup.py
 ```
-INFO:     Uvicorn running on http://0.0.0.0:8000
-INFO:     Application startup complete
+
+Este script verifica:
+- ✅ Configuración de variables de entorno
+- ✅ Sistema de logging configurado
+- ✅ Conexión a la base de datos
+- ✅ Importación correcta de la aplicación
+
+### Resultado Esperado
+```
+INFO: 🧪 Ejecutando pruebas de verificación...
+INFO: Probando: Configuración
+INFO: ✅ Configuración cargada: Bank App API
+INFO: Probando: Sistema Logging
+INFO: ✅ Sistema de logging configurado correctamente
+INFO: Probando: Conexión BD
+INFO: ✅ Conexión a la base de datos exitosa
+INFO: Probando: Importación App
+INFO: ✅ Aplicación importada correctamente
+INFO: ✅ Todas las pruebas pasaron (4/4)
+INFO: 🚀 La aplicación está lista para ejecutarse
+```
+
+## 📊 Sistema de Logging
+
+La aplicación incluye un sistema de logging avanzado y configurable:
+
+### Niveles de Logging
+- **DEBUG**: Información detallada para desarrollo
+- **INFO**: Información general de operaciones
+- **WARNING**: Advertencias que no detienen la ejecución
+- **ERROR**: Errores que requieren atención
+
+### Logging por Capa
+
+#### 1. **Router (API)**
+```log
+INFO: GET /users/1 - Consultando usuario desde IP: 192.168.1.100
+INFO: Usuario 1 consultado exitosamente: user@example.com
+```
+
+#### 2. **Servicio (Business Logic)**
+```log
+INFO: Obtenidos 5 usuarios
+WARNING: Usuario no encontrado: 999
+```
+
+#### 3. **Repositorio (Data Access)**
+```log
+DEBUG: Buscando usuario por ID: 1
+DEBUG: Usuario encontrado: ID 1 - user@example.com
+INFO: Usuario creado exitosamente: user@example.com (ID: 1)
+```
+
+#### 4. **Base de Datos**
+```log
+INFO: 🔍 Verificando conexión a la base de datos...
+INFO: ✅ Conexión a la base de datos exitosa
+```
+
+### Configuración de Logging
+
+Para cambiar el nivel de logging, modifica el archivo `app/main.py`:
+
+```python
+setup_logging(log_level="DEBUG")  # Para desarrollo
+setup_logging(log_level="INFO")   # Para producción
+```
+
+### Logging a Archivo
+
+Para guardar logs en archivo:
+
+```python
+setup_logging(log_level="INFO", log_file="logs/app.log")
+```
+
+### Ejemplos de Logs
+
+#### Inicio de la Aplicación
+```
+INFO: 🚀 Iniciando Banking Clean API...
+INFO: 🔍 Verificando conexión a la base de datos...
+INFO: ✅ Conexión a la base de datos exitosa
+INFO: ✅ Verificaciones completadas. Iniciando servidor...
+```
+
+#### Operaciones HTTP
+```
+INFO: POST /users - Creando usuario: user@example.com desde IP: 192.168.1.100
+INFO: Usuario registrado exitosamente: user@example.com
+INFO: GET /users/1 - Consultando usuario desde IP: 192.168.1.100
+INFO: Usuario 1 consultado exitosamente: user@example.com
+INFO: GET /users - Listando todos los usuarios desde IP: 192.168.1.100
+INFO: Listado de usuarios exitoso: 3 usuarios retornados
+```
+
+#### Operaciones de Base de Datos
+```
+DEBUG: Buscando usuario por email: user@example.com
+DEBUG: Usuario encontrado: user@example.com (ID: 1)
+DEBUG: Creando usuario en BD: newuser@example.com
+INFO: Usuario creado exitosamente: newuser@example.com (ID: 2)
+```
+
+#### Errores
+```
+WARNING: Usuario no encontrado: 999
+ERROR: Error de base de datos al crear usuario duplicate@example.com: (1062, "Duplicate entry")
 ```
 
 ---
@@ -299,7 +429,7 @@ Content-Type: application/json
 }
 ```
 
-**Respuesta (201):**
+**Respuesta Exitosa (201):**
 ```json
 {
   "id": 1,
@@ -309,6 +439,12 @@ Content-Type: application/json
   "created_at": "2026-04-26T10:30:00"
 }
 ```
+
+**Posibles Errores:**
+- `400 Bad Request`: Datos faltantes o inválidos
+- `409 Conflict`: Email ya registrado
+- `422 Unprocessable Entity`: Error de validación de datos
+- `500 Internal Server Error`: Error interno del servidor
 
 #### Obtener Usuario por ID
 ```http
@@ -316,9 +452,9 @@ GET /users/{user_id}
 ```
 
 **Parámetros:**
-- `user_id` (integer): ID del usuario a consultar
+- `user_id` (integer, requerido): ID del usuario a consultar
 
-**Respuesta (200):**
+**Respuesta Exitosa (200):**
 ```json
 {
   "id": 1,
@@ -329,19 +465,17 @@ GET /users/{user_id}
 }
 ```
 
-**Respuesta (404):**
-```json
-{
-  "detail": "Usuario no encontrado"
-}
-```
+**Posibles Errores:**
+- `400 Bad Request`: ID inválido (no es un número positivo)
+- `404 Not Found`: Usuario no encontrado
+- `500 Internal Server Error`: Error interno del servidor
 
 #### Obtener Todos los Usuarios
 ```http
 GET /users/
 ```
 
-**Respuesta (200):**
+**Respuesta Exitosa (200):**
 ```json
 [
   {
@@ -359,6 +493,39 @@ GET /users/
     "created_at": "2026-04-26T11:00:00"
   }
 ]
+```
+
+**Posibles Errores:**
+- `500 Internal Server Error`: Error interno del servidor
+
+#### Contar Usuarios
+```http
+GET /users/count
+```
+
+**Respuesta Exitosa (200):**
+```json
+{
+  "count": 2,
+  "message": "Total de usuarios registrados: 2"
+}
+```
+
+**Posibles Errores:**
+- `500 Internal Server Error`: Error interno del servidor
+
+### Health Check
+```http
+GET /
+```
+
+**Respuesta Exitosa (200):**
+```json
+{
+  "status": "healthy",
+  "message": "Banking Clean API is running",
+  "timestamp": "2026-04-26T12:00:00Z"
+}
 ```
 
 ---
@@ -414,18 +581,99 @@ Estas decisiones hacen el proyecto más fácil de mantener, probar y evolucionar
 
 ---
 
-## 🧪 Testing (Futuro)
+## 🐛 Troubleshooting
 
-Próximamente se añadirá:
+### Problemas Comunes de Base de Datos
 
+#### ❌ "Access denied for user" (MySQL)
+```
+sqlalchemy.exc.OperationalError: (1045, "Access denied for user 'root'@'localhost'")
+```
+
+**Soluciones:**
+1. Verificar credenciales en `.env`
+2. Crear usuario en MySQL:
+   ```sql
+   CREATE USER 'usuario'@'localhost' IDENTIFIED BY 'contraseña';
+   GRANT ALL PRIVILEGES ON nombre_base_datos.* TO 'usuario'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
+3. Asegurar que MySQL esté ejecutándose
+
+#### ❌ "Can't connect to MySQL server"
+```
+sqlalchemy.exc.OperationalError: (2003, "Can't connect to MySQL server")
+```
+
+**Soluciones:**
+1. Verificar que MySQL esté instalado y ejecutándose
+2. Verificar puerto (default: 3306)
+3. Verificar host (localhost vs 127.0.0.1)
+
+#### ❌ "Database does not exist" (MySQL/PostgreSQL)
+```
+sqlalchemy.exc.OperationalError: (1049, "Unknown database 'nombre_bd'")
+```
+
+**Soluciones:**
+1. Crear la base de datos manualmente:
+   ```sql
+   CREATE DATABASE nombre_base_datos;
+   ```
+
+#### ✅ Verificar Conexión
 ```bash
-pip install pytest pytest-asyncio
-pytest
+# Para MySQL
+mysql -u usuario -p nombre_base_datos -e "SELECT 1"
+
+# Para PostgreSQL
+psql -U usuario -d nombre_base_datos -c "SELECT 1"
+```
+
+### Logs de Depuración
+
+La aplicación registra logs detallados. Para ver más información:
+```bash
+uvicorn app.main:app --reload --log-level debug
+```
+
+### Verificar Variables de Entorno
+```bash
+# Linux/Mac
+echo $DATABASE_URL
+
+# Windows PowerShell
+echo $env:DATABASE_URL
 ```
 
 ---
 
-## 🔒 Seguridad
+## 🔒 Seguridad y Manejo de Errores
+
+### Verificación de Base de Datos
+
+La aplicación implementa **verificación automática** de conexión a la base de datos:
+
+- ✅ **Inicio seguro**: Verifica conexión antes de iniciar el servidor
+- ✅ **Mensajes claros**: Errores específicos para diferentes tipos de problemas
+- ✅ **Logging detallado**: Registra todas las operaciones de BD
+- ✅ **Rollback automático**: Transacciones se revierten en caso de error
+
+### Mejores Prácticas Implementadas
+
+1. **Validación de configuración**
+   - Variables de entorno validadas con Pydantic
+   - Mensajes de error específicos para configuración inválida
+
+2. **Manejo de errores de base de datos**
+   - Captura específica de errores de SQLAlchemy
+   - Logging de errores con contexto
+   - Respuestas HTTP apropiadas (400, 404, 500)
+
+3. **Gestión de transacciones**
+   - Commits explícitos en operaciones de escritura
+   - Rollback automático en caso de error
+   - Sesiones de BD manejadas correctamente
 
 ### Recomendaciones
 
@@ -434,7 +682,7 @@ pytest
    - Usa archivos `.env.example` con valores dummy
 
 2. **Contraseñas**
-   - Hasea las contraseñas con bcrypt
+   - Hashea las contraseñas con bcrypt
    - Usa JWT para autenticación
 
 3. **CORS**
@@ -442,6 +690,10 @@ pytest
 
 4. **HTTPS**
    - Usa HTTPS en producción
+
+5. **Base de datos**
+   - Para desarrollo: SQLite
+   - Para producción: MySQL/PostgreSQL con credenciales seguras
 
 ---
 

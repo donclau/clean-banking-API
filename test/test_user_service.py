@@ -58,6 +58,6 @@ def test_register_user_duplicate_email_raises_http_exception():
     with pytest.raises(HTTPException) as exc_info:
         service.register_user(user_in)
 
-    assert exc_info.value.status_code == 400
-    assert exc_info.value.detail == "Email ya registrado"
+    assert exc_info.value.status_code == 409  # Conflict - email ya existe
+    assert "Ya existe un usuario con este email" in exc_info.value.detail
     assert fake_repo.create_called is False
