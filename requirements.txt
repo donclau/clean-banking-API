@@ -6,3 +6,4 @@ cryptography
 python-dotenv
 pydantic[email]
 pydantic-settings
+pytest
