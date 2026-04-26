@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status
+from typing import List
 from ..domain.user import User
 from ..domain.repositories import UserRepositoryInterface
 from ..schemas.user_schema import UserCreate
@@ -22,3 +23,15 @@ class UserService:
         )
 
         return self.repository.create(user)
+
+    def get_user_by_id(self, user_id: int) -> User:
+        user = self.repository.get_user_by_id(user_id)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Usuario no encontrado"
+            )
+        return user
+
+    def get_all_users(self) -> List[User]:
+        return self.repository.get_all_users()

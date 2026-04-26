@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from sqlalchemy.orm import Session
 
@@ -28,3 +28,11 @@ class UserRepository(UserRepositoryInterface):
         except Exception as e:
             self.db.rollback()
             raise e
+
+    def get_user_by_id(self, user_id: int) -> Optional[User]:
+        db_user = self.db.query(UserEntity).filter(UserEntity.id == user_id).first()
+        return User.from_orm(db_user) if db_user else None
+
+    def get_all_users(self) -> List[User]:
+        db_users = self.db.query(UserEntity).all()
+        return [User.from_orm(db_user) for db_user in db_users]

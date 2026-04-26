@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from typing import List
 from ..infrastructure.database import get_db
 from ..repositories.user_repository import UserRepository
 from ..services.user_service import UserService
@@ -15,3 +16,11 @@ def get_user_service(db: Session = Depends(get_db)):
 @router.post("/", response_model=UserResponse, status_code=201)
 def create_user(user_in: UserCreate, service: UserService = Depends(get_user_service)):
     return service.register_user(user_in)
+
+@router.get("/{user_id}", response_model=UserResponse)
+def get_user_by_id(user_id: int, service: UserService = Depends(get_user_service)):
+    return service.get_user_by_id(user_id)
+
+@router.get("/", response_model=List[UserResponse])
+def get_all_users(service: UserService = Depends(get_user_service)):
+    return service.get_all_users()

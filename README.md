@@ -6,7 +6,7 @@ Backend financiero desarrollado con **FastAPI** y **Clean Architecture**. Una AP
 
 ## 📋 Descripción del Proyecto
 
-Banking Clean API es una aplicación backend que implementa un sistema de gestión bancaria siguiendo principios de **Clean Architecture**. Incluye una capa de dominio independiente (`app/domain/`) para modelar entidades y reglas de negocio, separada de la infraestructura de persistencia. Proporciona endpoints RESTful para operaciones de autenticación, gestión de usuarios y cuentas bancarias.
+Banking Clean API es una aplicación backend que implementa un sistema de gestión bancaria siguiendo principios de **Clean Architecture**. Incluye una capa de dominio independiente (`app/domain/`) para modelar entidades y reglas de negocio, separada de la infraestructura de persistencia. Proporciona endpoints RESTful para operaciones de gestión de usuarios incluyendo creación, consulta individual y listado completo.
 
 **Versión:** 1.0.0
 
@@ -14,7 +14,9 @@ Banking Clean API es una aplicación backend que implementa un sistema de gesti�
 
 ## 🎯 Características Principales
 
-- ✅ Gestión de usuarios con validación de email
+- ✅ Gestión completa de usuarios (CRUD)
+- ✅ Creación, consulta por ID y listado de usuarios
+- ✅ Validación de email único
 - ✅ Entidad de dominio `User` y repositorio abstracto
 - ✅ Autenticación y autorización
 - ✅ Gestión de cuentas bancarias
@@ -308,9 +310,55 @@ Content-Type: application/json
 }
 ```
 
-#### Obtener Usuario por Email
+#### Obtener Usuario por ID
 ```http
-GET /users/{email}
+GET /users/{user_id}
+```
+
+**Parámetros:**
+- `user_id` (integer): ID del usuario a consultar
+
+**Respuesta (200):**
+```json
+{
+  "id": 1,
+  "email": "usuario@example.com",
+  "name": "Juan",
+  "surname": "Pérez",
+  "created_at": "2026-04-26T10:30:00"
+}
+```
+
+**Respuesta (404):**
+```json
+{
+  "detail": "Usuario no encontrado"
+}
+```
+
+#### Obtener Todos los Usuarios
+```http
+GET /users/
+```
+
+**Respuesta (200):**
+```json
+[
+  {
+    "id": 1,
+    "email": "usuario1@example.com",
+    "name": "Juan",
+    "surname": "Pérez",
+    "created_at": "2026-04-26T10:30:00"
+  },
+  {
+    "id": 2,
+    "email": "usuario2@example.com",
+    "name": "María",
+    "surname": "García",
+    "created_at": "2026-04-26T11:00:00"
+  }
+]
 ```
 
 ---
