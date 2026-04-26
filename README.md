@@ -4,6 +4,28 @@ Backend financiero desarrollado con **FastAPI** y **Clean Architecture**. Una AP
 
 ---
 
+## 📋 Tabla de Contenidos
+
+- [📋 Descripción del Proyecto](#-descripción-del-proyecto)
+- [🎯 Características Principales](#-características-principales)
+- [📦 Requisitos Previos](#-requisitos-previos)
+- [🚀 Instalación del Entorno](#-instalación-del-entorno)
+- [📚 Instalación de Dependencias](#-instalación-de-dependencias)
+- [⚙️ Configuración del Ambiente](#️-configuración-del-ambiente)
+- [🗂️ Estructura del Proyecto](#️-estructura-del-proyecto)
+- [📡 Documentación de la API](#-documentación-de-la-api)
+- [🎮 Cómo Ejecutar la Aplicación](#-cómo-ejecutar-la-aplicación)
+- [🧪 Testing y Verificación](#-testing-y-verificación)
+- [📝 Sistema de Logging](#-sistema-de-logging)
+- [🏗️ Arquitectura: Clean Architecture](#️-arquitectura-clean-architecture)
+- [🔒 Seguridad y Manejo de Errores](#-seguridad-y-manejo-de-errores)
+- [🤝 Contribuir](#-contribuir)
+- [📄 Licencia](#-licencia)
+
+---
+
+## 📋 Descripción del Proyecto
+
 ## 📋 Descripción del Proyecto
 
 Banking Clean API es una aplicación backend que implementa un sistema de gestión bancaria siguiendo principios de **Clean Architecture**. Incluye una capa de dominio independiente (`app/domain/`) para modelar entidades y reglas de negocio, separada de la infraestructura de persistencia. Proporciona endpoints RESTful para operaciones de gestión de usuarios incluyendo creación, consulta individual y listado completo.
@@ -169,84 +191,229 @@ VERSION=1.0.0
 
 ```
 bank_app_api/
-│
-├── app/                          # Aplicación principal
+├── app/                          # 📁 Aplicación principal
 │   ├── __init__.py
-│   ├── main.py                  # Punto de entrada de la aplicación
+│   ├── main.py                   # 🚀 Punto de entrada de la aplicación
 │   │
-│   ├── api/                     # Capa de Presentación (Controllers/Routers)
+│   ├── api/                      # 🌐 Capa de Presentación (Controllers/Routers)
 │   │   ├── __init__.py
-│   │   └── user_router.py       # Rutas de usuarios
+│   │   └── user_router.py        # 👥 Rutas de usuarios
 │   │
-│   ├── core/                    # Configuración central
-│   │   └── (vacío - preparado para configuraciones globales)
-│   │
-│   ├── domain/                  # Capa de Dominio (Modelo y reglas de negocio)
+│   ├── core/                     # ⚙️ Configuración central
 │   │   ├── __init__.py
-│   │   ├── user.py              # Entidad de dominio User
-│   │   └── repositories.py      # Interfaz de repositorio de usuario
+│   │   ├── config.py             # 🔧 Configuración general
+│   │   └── logging_config.py     # 📝 Configuración de logging
 │   │
-│   ├── infrastructure/          # Capa de Infraestructura
+│   ├── domain/                   # 🎯 Capa de Dominio (Modelo y reglas de negocio)
 │   │   ├── __init__.py
-│   │   ├── database.py          # Configuración de BD
-│   │   └── models/              # Modelos ORM de SQLAlchemy
+│   │   ├── user.py               # 👤 Entidad de dominio User
+│   │   └── repositories.py       # 📋 Interfaz de repositorio de usuario
+│   │
+│   ├── infrastructure/           # 🏗️ Capa de Infraestructura
+│   │   ├── __init__.py
+│   │   ├── database.py           # 🗄️ Configuración de BD
+│   │   └── models/               # 📊 Modelos ORM de SQLAlchemy
 │   │       ├── __init__.py
-│   │       ├── user_entity.py   # Modelo de Usuario
-│   │       └── account_entity.py # Modelo de Cuenta
+│   │       ├── user_entity.py    # 👤 Modelo de Usuario
+│   │       └── account_entity.py # 💳 Modelo de Cuenta
 │   │
-│   ├── repositories/            # Capa de Acceso a Datos
-│   │   └── user_repository.py   # Operaciones de BD para usuarios
+│   ├── repositories/             # 💾 Capa de Acceso a Datos
+│   │   ├── __init__.py
+│   │   └── user_repository.py    # 🔍 Operaciones de BD para usuarios
 │   │
-│   ├── schemas/                 # Esquemas Pydantic (DTOs)
-│   │   └── user_schema.py       # Validación de entrada/salida de usuarios
+│   ├── schemas/                  # 📋 Esquemas Pydantic (DTOs)
+│   │   ├── __init__.py
+│   │   └── user_schema.py        # ✅ Validación de entrada/salida de usuarios
 │   │
-│   └── services/                # Capa de Lógica de Negocio
-│       └── user_service.py      # Servicios de usuario
+│   └── services/                 # 🔧 Capa de Lógica de Negocio
+│       ├── __init__.py
+│       └── user_service.py       # 👥 Servicios de usuario
 │
-├── .env                         # Variables de entorno (NO commitar)
-├── .gitignore                   # Archivos ignorados por Git
-├── requirements.txt             # Dependencias Python
-├── README.md                    # Este archivo
-├── bank_app.db                  # Base de datos SQLite (generada)
-└── helper.txt                   # Archivo auxiliar
-
+├── test/                         # 🧪 Tests
+│   ├── __init__.py
+│   └── test_user_service.py      # 🧪 Pruebas del servicio de usuarios
+│
+├── .env                          # 🔐 Variables de entorno (NO commitar)
+├── .env.example                  # 📄 Ejemplo de variables de entorno
+├── .gitignore                    # 🚫 Archivos ignorados por Git
+├── helper.txt                    # 📄 Archivo auxiliar
+├── README.md                     # 📖 Este archivo
+├── requirements.txt              # 📦 Dependencias Python
+├── bank_app.db                   # 🗄️ Base de datos SQLite (generada)
+└── test_setup.py                 # 🧪 Script de verificación de configuración
 ```
 
-### Descripción de Capas
+### 📋 Descripción de Capas
 
-#### 1. **API (Controllers/Routers)**
-- Maneja las solicitudes HTTP
-- Valida parámetros de entrada
-- Retorna respuestas formateadas
-- Ubicación: `app/api/`
+#### 1. **🌐 API (Controllers/Routers)**
+- Maneja las solicitudes HTTP entrantes
+- Valida parámetros de entrada y formatea respuestas
+- Coordina entre la lógica de negocio y las respuestas HTTP
+- **Ubicación:** `app/api/`
 
-#### 2. **Services (Lógica de Negocio)**
-- Contiene la lógica de negocio
-- Valida reglas de negocio
-- Coordina entre repositorios
-- Ubicación: `app/services/`
+#### 2. **🔧 Services (Lógica de Negocio)**
+- Contiene la lógica de negocio pura
+- Valida reglas de negocio específicas
+- Coordina operaciones entre múltiples repositorios
+- **Ubicación:** `app/services/`
 
-#### 3. **Repositories (Acceso a Datos)**
-- Encapsula operaciones de BD
-- Abstrae el ORM
-- Facilita testing
-- Ubicación: `app/repositories/`
+#### 3. **💾 Repositories (Acceso a Datos)**
+- Encapsula todas las operaciones de base de datos
+- Abstrae el ORM específico (SQLAlchemy)
+- Facilita el testing con mocks
+- **Ubicación:** `app/repositories/`
 
-#### 4. **Domain (Modelo de Dominio)**
+#### 4. **🎯 Domain (Modelo de Dominio)**
 - Contiene entidades de negocio y reglas del dominio
-- Mantiene los objetos y las interfaces independientes de la infraestructura
-- Permite probar la lógica sin depender de la base de datos
-- Ubicación: `app/domain/`
+- Define interfaces abstractas (repositorios)
+- Mantiene la lógica independiente de la infraestructura
+- **Ubicación:** `app/domain/`
 
-#### 5. **Infrastructure (Configuración)**
-- Base de datos y conexiones
-- Modelos ORM
-- Ubicación: `app/infrastructure/`
+#### 5. **🏗️ Infrastructure (Configuración Técnica)**
+- Configuración de conexiones a base de datos
+- Definición de modelos ORM
+- Componentes técnicos de bajo nivel
+- **Ubicación:** `app/infrastructure/`
 
-#### 6. **Schemas (Validación)**
-- DTOs (Data Transfer Objects)
-- Validación con Pydantic
-- Ubicación: `app/schemas/`
+#### 6. **📋 Schemas (Validación de Datos)**
+- DTOs (Data Transfer Objects) con Pydantic
+- Validación de entrada y salida de datos
+- Serialización/deserialización automática
+- **Ubicación:** `app/schemas/`
+
+#### 7. **⚙️ Core (Configuración Central)**
+- Configuraciones globales de la aplicación
+- Sistema de logging centralizado
+- Variables de entorno y settings
+- **Ubicación:** `app/core/`
+
+---
+
+## 📡 Documentación de la API
+
+### 🌐 Endpoints Disponibles
+
+#### 👤 Gestión de Usuarios
+
+##### **Crear Usuario**
+```http
+POST /users/
+Content-Type: application/json
+
+{
+  "email": "usuario@example.com",
+  "name": "Juan",
+  "surname": "Pérez"
+}
+```
+
+**✅ Respuesta Exitosa (201):**
+```json
+{
+  "id": 1,
+  "email": "usuario@example.com",
+  "name": "Juan",
+  "surname": "Pérez",
+  "created_at": "2026-04-26T10:30:00"
+}
+```
+
+**❌ Posibles Errores:**
+- `400 Bad Request`: Datos faltantes o inválidos
+- `409 Conflict`: Email ya registrado
+- `422 Unprocessable Entity`: Error de validación de datos
+- `500 Internal Server Error`: Error interno del servidor
+
+##### **Obtener Usuario por ID**
+```http
+GET /users/{user_id}
+```
+
+**Parámetros:**
+- `user_id` (integer, requerido): ID del usuario a consultar
+
+**✅ Respuesta Exitosa (200):**
+```json
+{
+  "id": 1,
+  "email": "usuario@example.com",
+  "name": "Juan",
+  "surname": "Pérez",
+  "created_at": "2026-04-26T10:30:00"
+}
+```
+
+**❌ Posibles Errores:**
+- `400 Bad Request`: ID inválido (no es un número positivo)
+- `404 Not Found`: Usuario no encontrado
+- `500 Internal Server Error`: Error interno del servidor
+
+##### **Obtener Todos los Usuarios**
+```http
+GET /users/
+```
+
+**✅ Respuesta Exitosa (200):**
+```json
+[
+  {
+    "id": 1,
+    "email": "usuario1@example.com",
+    "name": "Juan",
+    "surname": "Pérez",
+    "created_at": "2026-04-26T10:30:00"
+  },
+  {
+    "id": 2,
+    "email": "usuario2@example.com",
+    "name": "María",
+    "surname": "García",
+    "created_at": "2026-04-26T11:00:00"
+  }
+]
+```
+
+**❌ Posibles Errores:**
+- `500 Internal Server Error`: Error interno del servidor
+
+##### **Contar Usuarios**
+```http
+GET /users/count
+```
+
+**✅ Respuesta Exitosa (200):**
+```json
+{
+  "count": 2,
+  "message": "Total de usuarios registrados: 2"
+}
+```
+
+**❌ Posibles Errores:**
+- `500 Internal Server Error`: Error interno del servidor
+
+#### 🏥 Health Check
+```http
+GET /
+```
+
+**✅ Respuesta Exitosa (200):**
+```json
+{
+  "status": "healthy",
+  "message": "Banking Clean API is running",
+  "timestamp": "2026-04-26T12:00:00Z"
+}
+```
+
+### 📖 Documentación Interactiva
+
+Una vez ejecutada la aplicación, accede a la documentación interactiva:
+
+- **Swagger UI:** `http://localhost:8000/docs`
+- **ReDoc:** `http://localhost:8000/redoc`
+
+---
 
 ---
 
@@ -275,6 +442,10 @@ uvicorn app.main:app --reload
 - `--reload`: Recarga automática al modificar código
 - `--host 0.0.0.0`: Accesible desde cualquier interfaz
 - `--port 8000`: Puerto (por defecto)
+
+---
+
+## 🧪 Testing y Verificación
 
 ### Verificar Instalación
 ```bash
@@ -338,6 +509,10 @@ INFO: Usuario creado exitosamente: user@example.com (ID: 1)
 INFO: 🔍 Verificando conexión a la base de datos...
 INFO: ✅ Conexión a la base de datos exitosa
 ```
+
+---
+
+## 📝 Sistema de Logging
 
 ### Configuración de Logging
 
@@ -409,123 +584,6 @@ http://localhost:8000/redoc
 ### Health Check
 ```
 GET http://localhost:8000/
-```
-
----
-
-## 📝 Endpoints Disponibles
-
-### Usuarios
-
-#### Crear Usuario
-```http
-POST /users/
-Content-Type: application/json
-
-{
-  "email": "usuario@example.com",
-  "name": "Juan",
-  "surname": "Pérez"
-}
-```
-
-**Respuesta Exitosa (201):**
-```json
-{
-  "id": 1,
-  "email": "usuario@example.com",
-  "name": "Juan",
-  "surname": "Pérez",
-  "created_at": "2026-04-26T10:30:00"
-}
-```
-
-**Posibles Errores:**
-- `400 Bad Request`: Datos faltantes o inválidos
-- `409 Conflict`: Email ya registrado
-- `422 Unprocessable Entity`: Error de validación de datos
-- `500 Internal Server Error`: Error interno del servidor
-
-#### Obtener Usuario por ID
-```http
-GET /users/{user_id}
-```
-
-**Parámetros:**
-- `user_id` (integer, requerido): ID del usuario a consultar
-
-**Respuesta Exitosa (200):**
-```json
-{
-  "id": 1,
-  "email": "usuario@example.com",
-  "name": "Juan",
-  "surname": "Pérez",
-  "created_at": "2026-04-26T10:30:00"
-}
-```
-
-**Posibles Errores:**
-- `400 Bad Request`: ID inválido (no es un número positivo)
-- `404 Not Found`: Usuario no encontrado
-- `500 Internal Server Error`: Error interno del servidor
-
-#### Obtener Todos los Usuarios
-```http
-GET /users/
-```
-
-**Respuesta Exitosa (200):**
-```json
-[
-  {
-    "id": 1,
-    "email": "usuario1@example.com",
-    "name": "Juan",
-    "surname": "Pérez",
-    "created_at": "2026-04-26T10:30:00"
-  },
-  {
-    "id": 2,
-    "email": "usuario2@example.com",
-    "name": "María",
-    "surname": "García",
-    "created_at": "2026-04-26T11:00:00"
-  }
-]
-```
-
-**Posibles Errores:**
-- `500 Internal Server Error`: Error interno del servidor
-
-#### Contar Usuarios
-```http
-GET /users/count
-```
-
-**Respuesta Exitosa (200):**
-```json
-{
-  "count": 2,
-  "message": "Total de usuarios registrados: 2"
-}
-```
-
-**Posibles Errores:**
-- `500 Internal Server Error`: Error interno del servidor
-
-### Health Check
-```http
-GET /
-```
-
-**Respuesta Exitosa (200):**
-```json
-{
-  "status": "healthy",
-  "message": "Banking Clean API is running",
-  "timestamp": "2026-04-26T12:00:00Z"
-}
 ```
 
 ---
@@ -690,6 +748,55 @@ La aplicación implementa **verificación automática** de conexión a la base d
 
 4. **HTTPS**
    - Usa HTTPS en producción
+
+---
+
+## 🤝 Contribuir
+
+¡Las contribuciones son bienvenidas! Para contribuir:
+
+### 📋 Proceso de Contribución
+
+1. **Fork** el proyecto
+2. **Crea** una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. **Commit** tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. **Push** a la rama (`git push origin feature/AmazingFeature`)
+5. **Abre** un Pull Request
+
+### 🧪 Guías de Desarrollo
+
+- Sigue los principios de **Clean Architecture**
+- Mantén la **separación de capas**
+- Agrega **tests** para nuevas funcionalidades
+- Actualiza la **documentación** según sea necesario
+- Usa **commits descriptivos**
+
+### 📝 Estándares de Código
+
+- **Python**: PEP 8
+- **Commits**: Conventional Commits
+- **Documentación**: Actualizar README y docstrings
+- **Tests**: Cobertura mínima del 80%
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+
+---
+
+## 📞 Soporte
+
+Si tienes preguntas o problemas:
+
+- 📧 **Email**: [tu-email@example.com]
+- 🐛 **Issues**: [GitHub Issues](https://github.com/tu-usuario/bank_app_api/issues)
+- 📖 **Documentación**: [Wiki del proyecto](https://github.com/tu-usuario/bank_app_api/wiki)
+
+---
+
+⭐ **¡Si te gusta este proyecto, dale una estrella en GitHub!** ⭐
 
 5. **Base de datos**
    - Para desarrollo: SQLite
