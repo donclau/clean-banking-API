@@ -6,7 +6,7 @@ Backend financiero desarrollado con **FastAPI** y **Clean Architecture**. Una AP
 
 ## 📋 Descripción del Proyecto
 
-Banking Clean API es una aplicación backend que implementa un sistema de gestión bancaria siguiendo principios de **Clean Architecture**. Proporciona endpoints RESTful para operaciones de autenticación, gestión de usuarios y cuentas bancarias.
+Banking Clean API es una aplicación backend que implementa un sistema de gestión bancaria siguiendo principios de **Clean Architecture**. Incluye una capa de dominio independiente (`app/domain/`) para modelar entidades y reglas de negocio, separada de la infraestructura de persistencia. Proporciona endpoints RESTful para operaciones de autenticación, gestión de usuarios y cuentas bancarias.
 
 **Versión:** 1.0.0
 
@@ -15,6 +15,7 @@ Banking Clean API es una aplicación backend que implementa un sistema de gesti�
 ## 🎯 Características Principales
 
 - ✅ Gestión de usuarios con validación de email
+- ✅ Entidad de dominio `User` y repositorio abstracto
 - ✅ Autenticación y autorización
 - ✅ Gestión de cuentas bancarias
 - ✅ Arquitectura limpia y escalable
@@ -155,8 +156,10 @@ bank_app_api/
 │   ├── core/                    # Configuración central
 │   │   └── (vacío - preparado para configuraciones globales)
 │   │
-│   ├── domain/                  # Capa de Dominio (Business Logic)
-│   │   └── (vacío - modelos de negocio)
+│   ├── domain/                  # Capa de Dominio (Modelo y reglas de negocio)
+│   │   ├── __init__.py
+│   │   ├── user.py              # Entidad de dominio User
+│   │   └── repositories.py      # Interfaz de repositorio de usuario
 │   │
 │   ├── infrastructure/          # Capa de Infraestructura
 │   │   ├── __init__.py
@@ -204,12 +207,18 @@ bank_app_api/
 - Facilita testing
 - Ubicación: `app/repositories/`
 
-#### 4. **Infrastructure (Configuración)**
+#### 4. **Domain (Modelo de Dominio)**
+- Contiene entidades de negocio y reglas del dominio
+- Mantiene los objetos y las interfaces independientes de la infraestructura
+- Permite probar la lógica sin depender de la base de datos
+- Ubicación: `app/domain/`
+
+#### 5. **Infrastructure (Configuración)**
 - Base de datos y conexiones
 - Modelos ORM
 - Ubicación: `app/infrastructure/`
 
-#### 5. **Schemas (Validación)**
+#### 6. **Schemas (Validación)**
 - DTOs (Data Transfer Objects)
 - Validación con Pydantic
 - Ubicación: `app/schemas/`
@@ -308,7 +317,7 @@ GET /users/{email}
 
 ## 🏗️ Arquitectura: Clean Architecture
 
-El proyecto implementa **Clean Architecture** con las siguientes características:
+El proyecto implementa **Clean Architecture** con una separación clara entre la lógica de negocio y los detalles de infraestructura.
 
 ```
 ┌─────────────────────────────────┐
@@ -317,6 +326,10 @@ El proyecto implementa **Clean Architecture** con las siguientes característica
               ↓
 ┌─────────────────────────────────┐
 │      Services (Business Logic)   │  ← Lógica de Negocio
+└─────────────────────────────────┘
+              ↓
+┌─────────────────────────────────┐
+│      Domain (Modelo de Dominio)  │  ← Entidades e interfaces
 └─────────────────────────────────┘
               ↓
 ┌─────────────────────────────────┐
@@ -335,6 +348,21 @@ El proyecto implementa **Clean Architecture** con las siguientes característica
 - ✅ Escalabilidad
 - ✅ Mantenibilidad
 - ✅ Flexibilidad
+
+---
+
+## 🧠 Patrones de diseño y arquitectura
+
+Este proyecto aplica varios patrones de diseño importantes:
+
+- **Clean Architecture / Onion Architecture**: separa las capas de presentación, aplicación, dominio e infraestructura. El dominio es el núcleo más estable.
+- **Domain Model**: `app/domain/user.py` representa la entidad `User` como objeto de negocio independiente de la base de datos.
+- **Repository Pattern**: `app/domain/repositories.py` define la interfaz del repositorio y `app/repositories/user_repository.py` la implementa. Esto permite cambiar la persistencia sin tocar la lógica de negocio.
+- **Dependency Inversion**: los servicios dependen de abstracciones (`UserRepositoryInterface`) y no de implementaciones concretas.
+- **DTOs / Data Transfer Objects**: los esquemas de Pydantic en `app/schemas/` separan la validación de entrada/salida de la lógica interna.
+- **Single Responsibility Principle**: cada capa tiene una responsabilidad clara y única.
+
+Estas decisiones hacen el proyecto más fácil de mantener, probar y evolucionar con nuevos casos de uso o proveedores de datos.
 
 ---
 
